@@ -110,16 +110,16 @@ Page({
             roomList: roomList
           })
 
-          for (var index in roomList) {
-            if (roomList[index].room_id === self.data.roomID) {
-              wx.showToast({
-                title: '创建失败，相同 ID 房间已存在，请重新创建',
-                icon: 'none',
-                duration: 3000
-              });
-              return;
-            }
-          }
+          // for (var index in roomList) {
+          //   if (roomList[index].room_id === self.data.roomID) {
+          //     wx.showToast({
+          //       title: '创建失败，相同 ID 房间已存在，请重新创建',
+          //       icon: 'none',
+          //       duration: 3000
+          //     });
+          //     return;
+          //   }
+          // }
 
           var url = '../room/room?roomId=' + self.data.roomID + '&roomName=' + self.data.roomID + '&loginType=' + self.data.loginType;
           wx.navigateTo({
