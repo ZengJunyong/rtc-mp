@@ -1,7 +1,7 @@
 <view class="container">
     <view class="h1">视频会议系统</view>
     <view class="flex-center">
-        <input placeholder="请输入房间号"/>
+        <input value="{{roomID}}" bindinput="bindKeyInput" placeholder="请输入房间号"/>
     </view>
-    <button class="join">创建/加入房间</button>
+    <button bindtap="onCreateRoom" class="join">创建/加入房间</button>
 </view>
