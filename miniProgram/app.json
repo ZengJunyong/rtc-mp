@@ -8,7 +8,7 @@
   ],
   "window":{
     "backgroundTextStyle":"light",
-    "navigationBarBackgroundColor": "#0D70FF",
+    "navigationBarBackgroundColor": "#0b3650",
     "navigationBarTitleText": "ZEGO",
     "navigationBarTextStyle":"white",
     "enablePullDownRefresh": true
