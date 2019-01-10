@@ -22,13 +22,24 @@
 			"current": -1,
 			"list": []
 		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
 		"game": {
 			"currentL": -1,
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
-			"list": []
+			"current": 0,
+			"list": [
+				{
+					"id": 0,
+					"name": "room",
+					"pathName": "pages/liveroom/room/room",
+					"query": "roomId=123&roomName=123&loginType=anchor"
+				}
+			]
 		}
 	}
 }
