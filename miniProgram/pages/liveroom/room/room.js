@@ -411,25 +411,25 @@ Page({
       console.log('>>>[liveroom-room] onUserStateUpdate, roomID: ' + roomId + ', userList: ');
       console.log(userList);
 
-      for (var i = 0; i < userList.length; i++) {
-        if (userList[i].role === 1 && userList[i].action === 2) {
-          // 主播退出房间
-          wx.showModal({
-            title: '提示',
-            content: '主播已离开，请前往其他房间观看',
-            showCancel: false,
-            success: function(res) {
-              // 用户点击确定，或点击安卓蒙层关闭
-              if (res.confirm || !res.cancel) {
-                // 强制用户退出
-                wx.navigateBack();
-                zg.logout();
-              }
-            }
-          });
-          break;
-        }
-      }
+      // for (var i = 0; i < userList.length; i++) {
+      //   if (userList[i].role === 1 && userList[i].action === 2) {
+      //     // 主播退出房间
+      //     wx.showModal({
+      //       title: '提示',
+      //       content: '主播已离开，请前往其他房间观看',
+      //       showCancel: false,
+      //       success: function(res) {
+      //         // 用户点击确定，或点击安卓蒙层关闭
+      //         if (res.confirm || !res.cancel) {
+      //           // 强制用户退出
+      //           wx.navigateBack();
+      //           zg.logout();
+      //         }
+      //       }
+      //     });
+      //     break;
+      //   }
+      // }
     };
 
   },

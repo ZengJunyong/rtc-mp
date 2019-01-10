@@ -1,7 +1,22 @@
 <view class="container flex">
     <view class="room">
         <view class="video flex-center opacity55">
-            <image src="/resource/h5/roomset_1.png"/>
+            <live-pusher wx:if="{{pushUrl}}"
+                    id="video-livePusher"
+                    mode="{{pushConfig.mode}}"
+                    url="{{pushUrl}}"
+                    min-bitrate="{{pushConfig.minBitrate}}"
+                    max-bitrate="{{pushConfig.maxBitrate}}"
+                    aspect="{{pushConfig.aspect}}"
+                    beauty="{{pushConfig.isBeauty}}"
+                    muted="{{pushConfig.isMute}}"
+                    background-mute="true"
+                    debug="{{pushConfig.showLog}}"
+                    bindstatechange="onPushStateChange"
+                    bindnetstatus="onPushNetStateChange"
+                    waiting-image="https://storage.zego.im/downloads/pause_publish.png">
+            </live-pusher>
+            <image wx:if="{{!pushUrl}}" src="/resource/h5/roomset_1.png"/>
         </view>
         <view class="video flex-center opacity55">
             <image src="/resource/h5/roomset_2.png"/>
