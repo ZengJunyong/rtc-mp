@@ -9,8 +9,6 @@ page {
     background-size: cover;
     background-repeat: no-repeat;
     color: white;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     font-size: 14px;
     line-height: 1.6;
 }
