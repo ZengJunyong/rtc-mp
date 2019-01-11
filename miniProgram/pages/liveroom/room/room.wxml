@@ -18,7 +18,7 @@
             </live-pusher>
             <image wx:if="{{!pushUrl}}" src="/resource/h5/roomset_1.png"/>
         </view>
-        <block wx:if="{{playStreamList.length>3}}">
+        <block wx:if="{{playStreamList.length>5}}">
             <view class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}"
                   wx:for="{{playStreamList}}" wx:key="{{item.streamID}}">
                 <image wx:if="{{!item.playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
@@ -39,7 +39,8 @@
             </view>
         </block>
         <block wx:else>
-            <view wx:for="{{['','','']}}" class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
+            <view wx:for="{{['','','','','']}}"
+                  class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
                 <image wx:if="{{!playStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
                 <live-player
                         autoplay
