@@ -1,64 +1,66 @@
 <view class="container flex">
-    <view class="room">
-        <view class="video flex-center {{pushUrl?'':'opacity55'}}">
-            <live-pusher wx:if="{{pushUrl}}"
-                         id="video-livePusher"
-                         mode="{{pushConfig.mode}}"
-                         url="{{pushUrl}}"
-                         min-bitrate="{{pushConfig.minBitrate}}"
-                         max-bitrate="{{pushConfig.maxBitrate}}"
-                         aspect="{{pushConfig.aspect}}"
-                         beauty="{{pushConfig.isBeauty}}"
-                         muted="{{pushConfig.isMute}}"
-                         background-mute="true"
-                         debug="{{pushConfig.showLog}}"
-                         bindstatechange="onPushStateChange"
-                         bindnetstatus="onPushNetStateChange"
-                         waiting-image="https://storage.zego.im/downloads/pause_publish.png">
-            </live-pusher>
-            <image wx:if="{{!pushUrl}}" src="/resource/h5/roomset_1.png"/>
+    <scroll-view scroll-y>
+        <view class="room">
+            <view class="video flex-center {{pushUrl?'':'opacity55'}}">
+                <live-pusher wx:if="{{pushUrl}}"
+                             id="video-livePusher"
+                             mode="{{pushConfig.mode}}"
+                             url="{{pushUrl}}"
+                             min-bitrate="{{pushConfig.minBitrate}}"
+                             max-bitrate="{{pushConfig.maxBitrate}}"
+                             aspect="{{pushConfig.aspect}}"
+                             beauty="{{pushConfig.isBeauty}}"
+                             muted="{{pushConfig.isMute}}"
+                             background-mute="true"
+                             debug="{{pushConfig.showLog}}"
+                             bindstatechange="onPushStateChange"
+                             bindnetstatus="onPushNetStateChange"
+                             waiting-image="https://storage.zego.im/downloads/pause_publish.png">
+                </live-pusher>
+                <image wx:if="{{!pushUrl}}" src="/resource/h5/roomset_1.png"/>
+            </view>
+            <block wx:if="{{playStreamList.length>5}}">
+                <view class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}"
+                      wx:for="{{playStreamList}}" wx:key="{{item.streamID}}">
+                    <image wx:if="{{!item.playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
+                    <live-player
+                            autoplay
+                            wx:if="{{item.playUrl}}"
+                            id="{{item.streamID}}"
+                            mode="{{playConfig.mode}}"
+                            object-fit="fillCrop"
+                            min-cache="0.1"
+                            max-cache="0.3"
+                            src="{{item.playUrl}}"
+                            debug="{{pushConfig.showLog}}"
+                            bindstatechange="onPlayStateChange"
+                            bindnetstatus="onPlayNetStateChange"
+                            binderror="error">
+                    </live-player>
+                </view>
+            </block>
+            <block wx:else>
+                <view wx:for="{{['','','','','']}}"
+                      class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
+                    <image wx:if="{{!playStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
+                    <live-player
+                            autoplay
+                            wx:if="{{playStreamList[index].playUrl}}"
+                            id="{{playStreamList[index].streamID}}"
+                            mode="{{playConfig.mode}}"
+                            object-fit="fillCrop"
+                            min-cache="0.1"
+                            max-cache="0.3"
+                            src="{{playStreamList[index].playUrl}}"
+                            debug="{{pushConfig.showLog}}"
+                            bindstatechange="onPlayStateChange"
+                            bindnetstatus="onPlayNetStateChange"
+                            binderror="error">
+                    </live-player>
+                </view>
+            </block>
         </view>
-        <block wx:if="{{playStreamList.length>5}}">
-            <view class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}"
-                  wx:for="{{playStreamList}}" wx:key="{{item.streamID}}">
-                <image wx:if="{{!item.playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
-                <live-player
-                        autoplay
-                        wx:if="{{item.playUrl}}"
-                        id="{{item.streamID}}"
-                        mode="{{playConfig.mode}}"
-                        object-fit="fillCrop"
-                        min-cache="0.1"
-                        max-cache="0.3"
-                        src="{{item.playUrl}}"
-                        debug="{{pushConfig.showLog}}"
-                        bindstatechange="onPlayStateChange"
-                        bindnetstatus="onPlayNetStateChange"
-                        binderror="error">
-                </live-player>
-            </view>
-        </block>
-        <block wx:else>
-            <view wx:for="{{['','','','','']}}"
-                  class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
-                <image wx:if="{{!playStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
-                <live-player
-                        autoplay
-                        wx:if="{{playStreamList[index].playUrl}}"
-                        id="{{playStreamList[index].streamID}}"
-                        mode="{{playConfig.mode}}"
-                        object-fit="fillCrop"
-                        min-cache="0.1"
-                        max-cache="0.3"
-                        src="{{playStreamList[index].playUrl}}"
-                        debug="{{pushConfig.showLog}}"
-                        bindstatechange="onPlayStateChange"
-                        bindnetstatus="onPlayNetStateChange"
-                        binderror="error">
-                </live-player>
-            </view>
-        </block>
-    </view>
+    </scroll-view>
     <view class="bottom">
         <image src="/resource/h5/camera.png"/>
         <image src="/resource/h5/mic.png"/>

@@ -7,13 +7,15 @@
     overflow: scroll;
 }
 
-.room {
+scroll-view{
     flex-grow: 1;
+    height: calc(100% - 90px);
+}
+.room {
     padding: 12px 12px 0 12px;
     display: flex;
     flex-wrap: wrap;
-    height: calc(100% - 90px);
-    width: 100%;
+    height: 100%;
 }
 
 .room .video {
