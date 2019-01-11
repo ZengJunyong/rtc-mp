@@ -446,6 +446,10 @@ Page({
     //   zg.stopPlayingStream(this.data.playStreamList[i]['streamID']);
     //   this.data.playStreamList[i]['playContext'] && this.data.playStreamList[i]['playContext'].stop();
     // }
+    let url = '../roomlist/roomlist';
+    wx.navigateTo({
+      url
+    });
     this.onUnload();
   },
 
