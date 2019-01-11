@@ -80,7 +80,7 @@ Page({
     },
     preferPublishSourceType: 1, // 0：推流到 cdn；1：推流到 bgp
     preferPlaySourceType: 1,    // 0：auto；1：从 bgp 拉流
-    upperStreamLimit: 4,        // 房间内限制为最多 4 条流，当流数大于 4 条时，禁止新进入的用户连麦
+    upperStreamLimit: 20,        // 房间内限制为最多 20 条流，当流数大于 20 条时，禁止新进入的用户连麦
     tapTime:"",
     pushUrl:"",
     containerAdapt: "",
@@ -441,11 +441,12 @@ Page({
     console.log('>>>[liveroom-room] onHide');
 
     // 退后台停止拉流
-    for (var i = 0; i < this.data.playStreamList.length; i++) {
-      console.log('>>>[liveroom-room] onHide stopPlayStream: ', this.data.playStreamList[i]['streamID']);
-      zg.stopPlayingStream(this.data.playStreamList[i]['streamID']);
-      this.data.playStreamList[i]['playContext'] && this.data.playStreamList[i]['playContext'].stop();
-    }
+    // for (var i = 0; i < this.data.playStreamList.length; i++) {
+    //   console.log('>>>[liveroom-room] onHide stopPlayStream: ', this.data.playStreamList[i]['streamID']);
+    //   zg.stopPlayingStream(this.data.playStreamList[i]['streamID']);
+    //   this.data.playStreamList[i]['playContext'] && this.data.playStreamList[i]['playContext'].stop();
+    // }
+    this.onUnload();
   },
 
   /**
