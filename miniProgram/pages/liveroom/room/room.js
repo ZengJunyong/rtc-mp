@@ -4,44 +4,6 @@ var zg;
 
 //获取应用实例
 const app = getApp();
-var wxPlayer;
-
-Date.prototype.format = function(fmt) { 
-  var o = { 
-    "M+" : this.getMonth()+1,                 //月份 
-    "d+" : this.getDate(),                    //日 
-    "h+" : this.getHours(),                   //小时 
-    "m+" : this.getMinutes(),                 //分 
-    "s+" : this.getSeconds(),                 //秒 
-    "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-    "S"  : this.getMilliseconds()             //毫秒 
-  }; 
-  if(/(y+)/.test(fmt)) {
-    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-  }
-  for(var k in o) {
-    if(new RegExp("("+ k +")").test(fmt)){
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-    }
-  }
-  return fmt; 
-}
-
-function add0(m) {return m < 10 ? '0' + m : m}
-function format(timestamp)
-{
-  // timestamp 是整数，否则要 parseInt 转换
-  var time = new Date(timestamp);
-  var y = time.getFullYear();
-  var m = time.getMonth()+1;
-  var d = time.getDate();
-  var h = time.getHours();
-  var mm = time.getMinutes();
-  var s = time.getSeconds();
-  // return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
-  return add0(h)+':'+add0(mm)+':'+add0(s);
-}
-
 var windowHeight;
 var windowWidth;
 
@@ -266,46 +228,7 @@ Page({
       });
     };
 
-    // 接收房间IM消息
-    zg.onRecvRoomMsg = function (chat_data, server_msg_id, ret_msg_id) {
-      console.log(">>>[liveroom-room] zg onRecvRoomMsg, data: ", chat_data);
 
-      // 收到其他成员的回到前台通知
-      var content = chat_data[0].msg_content;
-      var category = chat_data[0].msg_category;
-
-      if (category === 1) {
-        // 系统消息
-        var data = content.split(".");
-        var streamID = data[1];
-        if (data[0] === "onShow") {
-          for (var i = 0; i < self.data.playStreamList.length; i++) {
-            if (self.data.playStreamList[i]["streamID"] === streamID && self.data.playStreamList[i]["playingState"] !== 'succeeded') {
-              self.data.playStreamList[i]["playContext"] && self.data.playStreamList[i]["playContext"].stop();
-              self.data.playStreamList[i]["playContext"] && self.data.playStreamList[i]["playContext"].play();
-            }
-          }
-        }
-      } else {
-        // 评论消息
-        var name = chat_data[0].id_name;
-        var time = chat_data[0].send_time;
-
-        var message = {};
-        message.name = name;
-        message.time = format(time);
-        message.content = content;
-        message.id = name + time;
-
-        self.data.messageList.push(message);
-
-        self.setData({
-          messageList: self.data.messageList,
-          scrollToView: message.id,
-        });
-      }
-
-    };
 
     // 服务端主动推过来的 流的质量更新
     zg.onPlayQualityUpdate = function (streamID, streamQuality) {
@@ -820,13 +743,7 @@ Page({
     });
   },
 
-  onLiveStateChange: function (e) {
-    wxPlayer.wxEvent(e);
-  },
 
-  onLiveError: function (e) {
-    wxPlayer.wxEvent(e);
-  },
 
   // live-player 绑定拉流事件
   onPlayStateChange(e) {
@@ -1036,19 +953,6 @@ Page({
     this.setData({
       pushConfig: this.data.pushConfig,
     });
-  },
-
-  bindMessageInput: function (e) {
-    var self = this;
-
-    var message = {};
-    message.content = e.detail.value;
-    message.name = self.data.userID;
-    message.time = new Date().format("hh:mm:ss");
-    message.id = message.name + Date.parse(new Date());
-
-    self.data.currentMessage = message;
-    self.data.tmpMessageList.push(message);
   },
 
   onComment: function () {
