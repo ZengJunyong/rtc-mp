@@ -62,9 +62,12 @@
         </view>
     </scroll-view>
     <view class="bottom">
-        <image src="/resource/h5/camera{{pushConfig.frontCamera? '' : '-gray'}}.png"  bindtap="switchCamera"/>
-        <image src="/resource/h5/mic{{pushConfig.isMute? '-dis' : ''}}.png" bindtap="enableMute"/>
-        <image src="/resource/h5/beauty{{pushConfig.isBeauty? '-dis' : ''}}.png" bindtap="setBeauty"/>
+        <view class="flex-center">
+            <image src="/resource/h5/{{pushConfig.frontCamera? 'front' : 'behind'}}Camera.png" bindtap="switchCamera"/>
+        </view>
+        <view class="flex-center">
+            <image src="/resource/h5/mic{{pushConfig.isMute? '-dis' : ''}}.png" bindtap="enableMute"/>
+        </view>
     </view>
 </view>
 
