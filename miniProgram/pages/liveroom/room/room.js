@@ -73,7 +73,7 @@ Page({
     });
 
     wx.setNavigationBarTitle({
-      title: this.data.roomID,
+      title: '房间号：' + this.data.roomID,
     });
 
     // 保持屏幕常亮
@@ -166,21 +166,6 @@ Page({
       }
     };
 
-    // 服务端主动推过来的 连接断开事件
-    zg.onDisconnect = function (err) {
-      console.log(">>>[liveroom-room] zg onDisconnect");
-    };
-
-    // 服务端主动推过来的 用户被踢掉在线状态事件
-    zg.onKickOut = function (err) {
-      console.log(">>>[liveroom-room] zg onKickOut");
-    };
-
-    // 接收服务端主推送的自定义信令
-    zg.onRecvCustomCommand = function (from_userid, from_idName, custom_content) {
-      console.log(">>>[liveroom-room] zg onRecvCustomCommand");
-    };
-
     // 服务端主动推过来的 流的创建/删除事件；updatedType: { added: 0, deleted: 1 }；streamList：增量流列表
     zg.onStreamUpdated = function (updatedType, streamList) {
       console.log(">>>[liveroom-room] zg onStreamUpdated, updatedType: " + (updatedType === 0 ? 'added' : 'deleted') + ', streamList: ');
@@ -193,11 +178,6 @@ Page({
         // 有成员正常推流成功，流增加
         self.startPlayingStreamList(streamList);
       }
-    };
-
-    // 服务端主动推过来的 流信息中的 ExtraInfo更新事件（暂时不用实现）
-    zg.onStreamExtraInfoUpdated = function (streamList) {
-      console.log(">>>[liveroom-room] zg onStreamExtraInfoUpdated");
     };
 
     // 服务端主动推过来的 流的播放状态, 视频播放状态通知
@@ -226,14 +206,6 @@ Page({
       self.setData({
         playStreamList: self.data.playStreamList,
       });
-    };
-
-
-
-    // 服务端主动推过来的 流的质量更新
-    zg.onPlayQualityUpdate = function (streamID, streamQuality) {
-      // console.log(">>>[liveroom-room] zg onPlayQualityUpdate");
-      // console.log(streamQuality);
     };
 
     // 推流后，服务器主动推过来的，流状态更新
@@ -288,73 +260,6 @@ Page({
       });
     };
 
-    // 收到连麦请求
-    zg.onRecvJoinLiveRequest = function(requestId, fromUserId, fromUsername, roomId) {
-      console.log('>>>[liveroom-room] onRecvJoinLiveRequest, roomId: ' + roomId + 'requestUserId: ' + fromUserId + ', requestUsername: ' + fromUsername);
-
-      self.data.requestJoinLiveList.push(requestId);
-
-      var content = '观众 ' + fromUsername + ' 请求连麦，是否允许？';
-      wx.showModal({
-        title: '提示',
-        content: content,
-        success: function(res) {
-          if (res.confirm) {
-            console.log('>>>[liveroom-room] onRecvJoinLiveRequest accept join live');
-            zg.respondJoinLive(requestId, true); // true：同意；false：拒绝 
-
-            // self.switchPusherOrPlayerMode('pusher', 'RTC');
-
-            // 已达房间上限，主播依然同意未处理的连麦，强制不处理
-            if (self.data.reachStreamLimit) {
-              wx.showToast({
-                title: '房间内连麦人数已达上限，不建立新的连麦',
-                icon: 'none',
-                duration: 2000
-              });
-            }
-
-            self.handleMultiJoinLive(self.data.requestJoinLiveList, requestId, self);
-          } else {
-            console.log('>>>[liveroom-room] onRecvJoinLiveRequest refuse join live');
-            zg.respondJoinLive(requestId, false); // true：同意；false：拒绝
-
-            self.handleMultiJoinLive(self.data.requestJoinLiveList, requestId, self);
-          }
-        }
-      });
-    };
-
-    // 收到停止连麦请求
-    zg.onRecvEndJoinLiveCommand = function (requestId, fromUserId, fromUsername, roomId) {
-      console.log('>>>[liveroom-room] onRecvEndJoinLiveCommand, roomId: ' + roomId + 'requestUserId: ' + fromUserId + ', requestUsername: ' + fromUsername);
-    };
-
-    zg.onUserStateUpdate = function(roomId, userList) {
-      console.log('>>>[liveroom-room] onUserStateUpdate, roomID: ' + roomId + ', userList: ');
-      console.log(userList);
-
-      // for (var i = 0; i < userList.length; i++) {
-      //   if (userList[i].role === 1 && userList[i].action === 2) {
-      //     // 主播退出房间
-      //     wx.showModal({
-      //       title: '提示',
-      //       content: '主播已离开，请前往其他房间观看',
-      //       showCancel: false,
-      //       success: function(res) {
-      //         // 用户点击确定，或点击安卓蒙层关闭
-      //         if (res.confirm || !res.cancel) {
-      //           // 强制用户退出
-      //           wx.navigateBack();
-      //           zg.logout();
-      //         }
-      //       }
-      //     });
-      //     break;
-      //   }
-      // }
-    };
-
   },
 
   /**
@@ -363,12 +268,6 @@ Page({
   onHide: function () {
     console.log('>>>[liveroom-room] onHide');
 
-    // 退后台停止拉流
-    // for (var i = 0; i < this.data.playStreamList.length; i++) {
-    //   console.log('>>>[liveroom-room] onHide stopPlayStream: ', this.data.playStreamList[i]['streamID']);
-    //   zg.stopPlayingStream(this.data.playStreamList[i]['streamID']);
-    //   this.data.playStreamList[i]['playContext'] && this.data.playStreamList[i]['playContext'].stop();
-    // }
     let url = '../roomlist/roomlist';
     wx.navigateTo({
       url
@@ -400,7 +299,7 @@ Page({
     zg.stopPublishingStream(this.data.publishStreamID);
     if (this.data.isPublishing) {
       console.log('>>>[liveroom-room] stop publish stream, streamid: ' + this.data.publishStreamID);
-      
+
       this.setData({
         publishStreamID: "",
         isPublishing: false,
@@ -414,13 +313,6 @@ Page({
 
     // 退出登录
     zg.logout();
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
   },
 
   /**
@@ -488,7 +380,6 @@ Page({
         });
       }
 
-      self.adaptContainerSize(self);
     });
   },
 
@@ -508,79 +399,10 @@ Page({
       self.data.pusherVideoContext.stop();
       self.data.pusherVideoContext.start();
 
-      self.adaptContainerSize(self);
 
       // self.animation.rotate(720).step();
       // self.setData({animation: this.animation.export()});
     });
-  },
-
-  // 界面上 player 和 pusher 数量之和大于 1，则动态调整视图大小
-  adaptContainerSize: function () {
-    var self = this;
-    if (self.data.playStreamList.length + (self.data.pushUrl.length > 0 ? 1 : 0) > 1) {
-      console.log('>>>[liveroom-room] adaptContainerSize, to multi size');
-      if (!self.data.isMessageHide) {
-        self.setData({
-          containerAdapt: "container-multi-small",
-        });
-      } else {
-        self.setData({
-          containerAdapt: "container-multi-big",
-        });
-      }
-    } else {
-      if (!self.data.isMessageHide) {
-        console.log('>>>[liveroom-room] adaptContainerSize, to single small size');
-        self.setData({
-          containerAdapt: "container-single-small",
-        });
-      } else {
-        if (0.57975 * windowHeight > windowWidth) {
-          console.log('>>>[liveroom-room] adaptContainerSize, to single big size, calc by width');
-          self.setData({
-            containerAdapt: "container-single-big-calc-by-width",
-          });
-        } else {
-          console.log('>>>[liveroom-room] adaptContainerSize, to single big size, calc by height');
-          self.setData({
-            containerAdapt: "container-single-big-calc-by-height",
-          });
-        }
-      }
-    }
-  },
-
-  adaptContainerBaseSize: function () {
-    var self = this;
-
-    try {
-      var res = wx.getSystemInfoSync();
-      console.log('>>>[liveroom-room] getSystemInfoSync success');
-      windowWidth = res.windowWidth;
-      windowHeight = res.windowHeight; 
-    } catch (e) {
-      // Do something when catch error
-    }
-
-    if (!self.data.isMessageHide) {
-      console.log('>>>[liveroom-room] adaptContainerBaseSize, to small size');
-      self.setData({
-        containerBaseAdapt: "containerBase-small",
-      });
-    } else {
-      console.log('>>>[liveroom-room] adaptContainerBaseSize, to big size');
-
-      if (0.57975 * windowHeight > windowWidth) {
-        self.setData({
-          containerBaseAdapt: "containerBase-big-calc-by-width",
-        });
-      } else {
-        self.setData({
-          containerBaseAdapt: "containerBase-big-calc-by-height",
-        });
-      }
-    }
   },
 
   // 获取登录 token
@@ -703,13 +525,6 @@ Page({
 
           playStreamList[j]['playContext'] && playStreamList[j]['playContext'].stop();
           
-          var content = '一位观众结束连麦，停止拉流';
-          wx.showToast({
-            title: content,
-            icon: 'none',
-            duration: 2000
-          });
-
           playStreamList.splice(j, 1);
           break;
         }
@@ -739,7 +554,6 @@ Page({
         // self.switchPusherOrPlayerMode('pusher', 'live');
       }
 
-      self.adaptContainerSize(self);
     });
   },
 
@@ -805,107 +619,6 @@ Page({
     });
   },
 
-  // 观众请求连麦，或主播邀请连麦
-  requestJoinLive: function () {
-    var self = this;
-
-    // 防止两次点击操作间隔太快
-    var nowTime = new Date();
-    if (nowTime - self.data.tapTime < 1000) {
-      return;
-    }
-    self.setData({'tapTime': nowTime});
-
-    // 正在连麦中，不处理
-    if (self.data.beginToPublish === true) {
-      console.log('>>>[liveroom-room] begin to publishing, ignore');
-      return;
-    }
-
-    // 房间流已达上限，不处理
-    if (self.data.reachStreamLimit === true) {
-      console.log('>>>[liveroom-room] reach stream limit, ignore');
-      return;
-    }
-
-    // 主播点击，走邀请连麦逻辑，待补充
-    if (self.data.loginType === 'anchor') {
-      console.log('>>>[liveroom-room] anchor inviteJoinLive');
-      return;
-    }
-
-    // 观众正在连麦时点击，则结束连麦
-    if (self.data.isPublishing) {
-      zg.endJoinLive(self.data.anchorID, function(result, userID, userName) {
-        console.log('>>>[liveroom-room] endJoinLive, result: ' + result);
-      }, null);
-
-      // 停止推流
-      zg.stopPublishingStream(self.data.publishStreamID);
-      
-      // 观众结束连麦，切换回 live 模式
-      // self.switchPusherOrPlayerMode('player', 'live');
-      self.setData({
-        isPublishing: false,
-        pushUrl: "",
-      }, function() {
-        // 自己停止推流，不会收到流删减消息，所以此处需要主动调整视图大小
-        self.adaptContainerSize(self);
-      });
-
-      self.data.pusherVideoContext.stop();
-      return;
-    }
-
-    // 观众未连麦，点击开始推流
-    console.log('>>>[liveroom-room] audience requestJoinLive');
-    self.setData({
-      beginToPublish: true,
-    })
-
-    zg.requestJoinLive(self.data.anchorID, function(res) {
-      console.log('>>>[liveroom-room] requestJoinLive sent succeeded');
-    }, function(error) {
-      console.log('>>>[liveroom-room] requestJoinLive sent failed, error: ', error);
-    }, function(result, userID, userName) {
-      console.log('>>>[liveroom-room] requestJoinLive, result: ' + result);
-
-      // 待补充，校验 userID
-      if (result === false) {
-        wx.showToast({
-         title: '主播拒绝连麦',
-         icon: 'none',
-         duration: 2000
-        })
-
-        self.setData({
-          beginToPublish: false,
-        })
-      } else {
-        // 主播同意了连麦，但此时已经达到了房间流上限，不再进行连麦
-        if (self.data.reachStreamLimit) {
-          self.setData({
-            beginToPublish: false,
-          })
-          return;
-        }
-
-        wx.showToast({
-          title: '主播同意连麦，准备推流',
-          icon: 'none',
-          duration: 2000
-        });
-
-        // 主播同意连麦后，观众开始推流
-        console.log('>>>[liveroom-room] startPublishingStream, userID: ' + userID + ', publishStreamID: ' + self.data.publishStreamID);
-        zg.setPreferPublishSourceType(self.data.preferPublishSourceType);
-        zg.startPublishingStream(self.data.publishStreamID, '');
-
-        // self.switchPusherOrPlayerMode('player', 'RTC');
-      }
-    });
-  },
-
   switchPusherOrPlayerMode: function (type, mode) {
     var self = this;
     console.log('>>>[liveroom-room] switchPusherOrPlayerMode, type: ' + type + 'mode: ' + mode);
@@ -913,15 +626,6 @@ Page({
       self.data.pushConfig.mode = mode;
     } else {
       self.data.playConfig.mode = mode;
-    }
-  },
-
-  handleMultiJoinLive: function(requestJoinLiveList, requestId, self) {
-    for (var i = 0; i < requestJoinLiveList.length; i++) {
-      if (requestJoinLiveList[i] != requestId) {
-        // 新的连麦弹框会覆盖旧的弹框，拒绝被覆盖的连麦请求
-        zg.respondJoinLive(requestJoinLiveList[i], false);
-      }
     }
   },
 
@@ -953,53 +657,6 @@ Page({
     this.setData({
       pushConfig: this.data.pushConfig,
     });
-  },
-
-  onComment: function () {
-    console.log('>>>[liveroom-room] begin to comment');
-    
-    var self = this;
-    self.data.messageList.push(self.data.tmpMessageList[self.data.tmpMessageList.length - 1]);
-    self.data.tmpMessageList = [];
-
-    console.log('>>>[liveroom-room] currentMessage');
-    console.log(self.data.currentMessage);
-
-    self.setData({
-      messageList: self.data.messageList,
-      inputMessage: "",
-      scrollToView: self.data.currentMessage.id,
-    });
-
-    zg.sendRoomMsg(2, 1, self.data.currentMessage.content, 
-      function(seq, msgId, msg_category, msg_type, msg_content) {
-      console.log('>>>[liveroom-room] onComment success');
-    }, function(err, seq, msg_category, msg_type, msg_content) {
-      console.log('>>>[liveroom-room] onComment, error: ');
-      console.log(err);
-    });
-  },
-
-  onShowMessage: function () {
-    console.log('>>>[liveroom-room] onShowMessage');
-    var self = this;
-
-    if (self.data.messageAdapt === "message-hide") {
-      self.data.messageAdapt = "message-show";
-      self.data.isMessageHide = false;
-    } else {
-      self.data.messageAdapt = "message-hide";
-      self.data.isMessageHide = true;
-    }
-
-    self.setData({
-      messageAdapt: self.data.messageAdapt,
-      isMessageHide: self.data.isMessageHide,
-    });
-
-    self.adaptContainerBaseSize();
-    self.adaptContainerSize();
-
   },
 
   error(e) {
