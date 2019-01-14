@@ -1,5 +1,5 @@
 <view class="container flex">
-    <scroll-view scroll-y="{{playStreamList.length>-1}}">
+    <scroll-view scroll-y="{{playStreamList.length>3}}">
         <view class="room">
             <view class="video flex-center {{pushUrl?'':'opacity55'}}">
                 <live-pusher wx:if="{{pushUrl}}"
@@ -40,7 +40,7 @@
                 </view>
             </block>
             <block wx:else>
-                <view wx:for="{{['','','','','']}}"
+                <view wx:for="{{['','','']}}"
                       class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
                     <image wx:if="{{!playStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
                     <live-player
