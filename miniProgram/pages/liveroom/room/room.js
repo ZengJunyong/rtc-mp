@@ -4,8 +4,6 @@ var zg;
 
 //获取应用实例
 const app = getApp();
-var windowHeight;
-var windowWidth;
 
 /**
  * 页面的初始数据
@@ -43,19 +41,7 @@ Page({
     preferPublishSourceType: 1, // 0：推流到 cdn；1：推流到 bgp
     preferPlaySourceType: 1,    // 0：auto；1：从 bgp 拉流
     upperStreamLimit: 20,        // 房间内限制为最多 20 条流，当流数大于 20 条时，禁止新进入的用户连麦
-    tapTime:"",
     pushUrl:"",
-    containerAdapt: "",
-    containerBaseAdapt: "containerBase-big-calc-by-height",
-    messageAdapt:"message-hide",
-    requestJoinLiveList: [],    // 请求连麦的成员列表
-    messageList:[],             // 消息列表，列表中每个对象结构为 {name:'xxx', time:xxx, content:'xxx'}
-    tmpMessageList:[],
-    currentMessage:{},
-    isCommentShow: false,
-    inputMessage:"",
-    isMessageHide: true,
-    scrollToView: "",
   },
 
   /**
@@ -551,7 +537,6 @@ Page({
 
       // 主播结束了所有的连麦，切换回 live 模式
       if (self.data.loginType === 'anchor' && self.data.playStreamList.length === 0) {
-        // self.switchPusherOrPlayerMode('pusher', 'live');
       }
 
     });
@@ -566,24 +551,14 @@ Page({
     zg.updatePlayerState(e.currentTarget.id, e, 0);
 
     if (e.detail.code === 2002 || e.detail.code === 2004) {
-      this.updatePlayingStateOnly('succeeded');
+      // this.updatePlayingStateOnly('succeeded');
     } else if (e.detail.code === -2301) {
-      this.updatePlayingStateOnly('failed');
+      // this.updatePlayingStateOnly('failed');
     }
   },
 
   // 主播异常操作，导致拉流端 play 失败，此时不会影响 SDK 内部拉流状态，但需要额外处理 live-player 状态
   updatePlayingStateOnly: function(newState) {
-    for (var index in this.data.playStreamList) {
-      var playStream = this.data.playStreamList[index];
-      if (playStream.streamID === e.currentTarget.id && playStream.playingState !== newState) {
-        playStream.playingState = newState;
-        this.setData({
-          playStreamList: this.data.playStreamList,
-        })
-        break;
-      }
-    }
   },
 
   // live-pusher 绑定推流事件
@@ -604,29 +579,6 @@ Page({
   onPushNetStateChange(e) {
     //透传网络状态事件给 SDK，type 1 推流
     zg.updatePlayerNetStatus(this.data.publishStreamID, e, 1);
-  },
-
-  // 主播邀请连麦
-  inviteJoinLive: function() {
-    console.log('>>>[liveroom-room] inviteJoinLive');
-
-    zg.inviteJoinLive('', function(res) {
-      console.log('>>>[liveroom-room] inviteJoinLive sent succeeded');
-    }, function(error) {
-      console.log('>>>[liveroom-room] inviteJoinLive sent failed, error: ', error);
-    }, function(result, userID, userName) {
-      console.log('>>>[liveroom-room] inviteJoinLive, result: ' + result);
-    });
-  },
-
-  switchPusherOrPlayerMode: function (type, mode) {
-    var self = this;
-    console.log('>>>[liveroom-room] switchPusherOrPlayerMode, type: ' + type + 'mode: ' + mode);
-    if (type === 'pusher') {
-      self.data.pushConfig.mode = mode;
-    } else {
-      self.data.playConfig.mode = mode;
-    }
   },
 
   // 推流画面配置
