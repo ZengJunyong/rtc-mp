@@ -130,7 +130,7 @@ Page({
 
     var self = this;
 
-    var publishStreamID = 'xcxS' + timestamp;
+    var publishStreamID = 'v' + timestamp; // 必须以 v 开头，与web端的保持一致
     self.setData({
       publishStreamID : publishStreamID,
     });
