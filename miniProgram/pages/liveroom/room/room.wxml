@@ -1,5 +1,5 @@
 <view class="container flex">
-    <scroll-view scroll-y="{{playStreamList.length>3}}">
+    <scroll-view scroll-y="{{videoStreamList.length>3}}">
         <view class="room">
             <view class="video flex-center {{pushUrl?'':'opacity55'}}">
                 <live-pusher wx:if="{{pushUrl}}"
@@ -19,9 +19,9 @@
                 </live-pusher>
                 <image wx:if="{{!pushUrl}}" src="/resource/h5/roomset_1.png"/>
             </view>
-            <block wx:if="{{playStreamList.length>5}}">
-                <view class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}"
-                      wx:for="{{playStreamList}}" wx:key="{{item.streamID}}">
+            <block wx:if="{{videoStreamList.length>3}}">
+                <view class="video flex-center {{videoStreamList[index].playUrl?'':'opacity55'}}"
+                      wx:for="{{videoStreamList}}" wx:key="{{item.streamID}}">
                     <image wx:if="{{!item.playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
                     <live-player
                             autoplay
@@ -41,17 +41,17 @@
             </block>
             <block wx:else>
                 <view wx:for="{{['','','']}}"
-                      class="video flex-center {{playStreamList[index].playUrl?'':'opacity55'}}">
-                    <image wx:if="{{!playStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
+                      class="video flex-center {{videoStreamList[index].playUrl?'':'opacity55'}}">
+                    <image wx:if="{{!videoStreamList[index].playUrl}}" src="/resource/h5/roomset_{{index + 2}}.png"/>
                     <live-player
                             autoplay
-                            wx:if="{{playStreamList[index].playUrl}}"
-                            id="{{playStreamList[index].streamID}}"
+                            wx:if="{{videoStreamList[index].playUrl}}"
+                            id="{{videoStreamList[index].streamID}}"
                             mode="{{playConfig.mode}}"
                             object-fit="fillCrop"
                             min-cache="0.1"
                             max-cache="0.3"
-                            src="{{playStreamList[index].playUrl}}"
+                            src="{{videoStreamList[index].playUrl}}"
                             debug="{{pushConfig.showLog}}"
                             bindstatechange="onPlayStateChange"
                             bindnetstatus="onPlayNetStateChange"
@@ -67,6 +67,23 @@
         </view>
         <view class="flex-center">
             <image src="/resource/h5/mic{{pushConfig.isMute? '-dis' : ''}}.png" bindtap="enableMute"/>
+        </view>
+        <view class="none"
+              wx:for="{{audioStreamList}}" wx:key="{{item.streamID}}">
+            <live-player
+                    autoplay
+                    wx:if="{{item.playUrl}}"
+                    id="{{item.streamID}}"
+                    mode="{{playConfig.mode}}"
+                    object-fit="fillCrop"
+                    min-cache="0.1"
+                    max-cache="0.3"
+                    src="{{item.playUrl}}"
+                    debug="{{pushConfig.showLog}}"
+                    bindstatechange="onPlayStateChange"
+                    bindnetstatus="onPlayNetStateChange"
+                    binderror="error">
+            </live-player>
         </view>
     </view>
 </view>
